@@ -44,6 +44,9 @@ const writeMappedDataToNewFiles = () => {
 
 const getInfo = async () => {
   let ufAndCitiesAmount = [];
+  let biggerCityNames = [];
+  let smallerCityNames = [];
+
   const getCitiesLengthOfUf = async (uf) => {
     const file = JSON.parse(
       await fs.readFile(`./states/${uf.toUpperCase()}.json`)
@@ -84,9 +87,59 @@ const getInfo = async () => {
     console.log(fiveUfWithLessCities);
   };
 
+  const getFiveCitiesWithBiggerNames = () => {
+    biggerCityNames = mappedData
+      .map((state) => {
+        const biggerCity = state.cities.reduce((acc, city) =>
+          acc.length > city.length ? acc : city
+        );
+
+        return `${biggerCity}-${state.uf}`;
+      })
+      .sort((a, b) => a.localeCompare(b));
+
+    console.log("The city with the bigger name for each UF is");
+    console.log(biggerCityNames);
+  };
+
+  const getFiveCitiesWithSmallerNames = () => {
+    smallerCityNames = mappedData
+      .map((state) => {
+        const smallerCity = state.cities.reduce((acc, city) =>
+          acc.length < city.length ? acc : city
+        );
+
+        return `${smallerCity}-${state.uf}`;
+      })
+      .sort((a, b) => a.localeCompare(b));
+
+    console.log("The city with the smaller name for each UF is");
+    console.log(smallerCityNames);
+  };
+
+  const getBiggerCityName = () => {
+    const biggerCityName = biggerCityNames.reduce((acc, city) =>
+      city.split("-")[0].length < acc.split("-")[0].length ? acc : city
+    );
+    console.log("The city with the bigger name is");
+    console.log(biggerCityName);
+  };
+
+  const getSmallerCityName = () => {
+    const smallerCityName = smallerCityNames.reduce((acc, city) =>
+      city.split("-")[0].length > acc.split("-")[0].length ? acc : city
+    );
+    console.log("The city with the smaller name is");
+    console.log(smallerCityName);
+  };
+
   await getCitiesLengthOfUf("SC");
   getFiveUfWithMoreCities();
   getFiveUfWithLessCities();
+  getFiveCitiesWithBiggerNames();
+  getFiveCitiesWithSmallerNames();
+  getBiggerCityName();
+  getSmallerCityName();
 };
 
 getData();
